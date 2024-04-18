@@ -1,5 +1,6 @@
 import telebot
 from telebot import types
+from datetime import date
 
 # Токен бота
 TOKEN = ''
@@ -7,7 +8,7 @@ TOKEN = ''
 # Создаем объект бота
 bot = telebot.TeleBot(TOKEN)
 
-# Динамический спико отсутствующих
+# Динамический список отсутствующих
 absentees = [
     "Алаторцев П.В.",
     "Багиров Э.Э.",
@@ -40,6 +41,7 @@ def generate_keyboard():
     for name in absentees:
         button = types.KeyboardButton(name)
         keyboard.add(button)
+    keyboard.add(types.KeyboardButton('Вернуться на /start'))  # Добавляем кнопку "Вернуться на /start"
     return keyboard
 
 # Команда /start для начала общения с ботом
@@ -60,12 +62,13 @@ def start(message):
                          "Привет! Я твой бот для учета отсутствующих. На данный момент отсутствующих нет.",
                          reply_markup=markup)
 
-
 # Команда /absentees для вывода списка отсутствующих
 @bot.message_handler(commands=['absentees'])
 def show_absentees(message):
     if len(absentees) > 0:
-        bot.send_message(message.chat.id, "Список отсутствующих:\n" + "\n".join(absentees))
+        bot.send_message(message.chat.id, f"{date.today()}")
+        absentees_list = "\n".join(absentees)
+        bot.send_message(message.chat.id, f"Список отсутствующих:\n{absentees_list}")
     else:
         bot.send_message(message.chat.id, "На данный момент отсутствующих нет.")
 
@@ -75,30 +78,30 @@ def refill_absentees(message):
     global absentees
 
     absentees = [
-    "Алаторцев П.В.",
-    "Багиров Э.Э.",
-    "Башкиров И.В.",
-    "Борхоев Б.Б.",
-    "Евстафьев А.А.",
-    "Журавлева М.Р.",
-    "Киреев А.А.",
-    "Ламажап Н.А.",
-    "Ленючев Д.А.",
-    "Львов М.Д.",
-    "Макаров Е.С.",
-    "Овчинникова И.А.",
-    "Подлинный М.В.",
-    "Сатин Т.С.",
-    "Секункова П.А.",
-    "Семечаевский П.В.",
-    "Сержантов И.А.",
-    "Токарев А.Д.",
-    "Чичёв А.Б.",
-    "Шахкиримов К.И.",
-    "Шишалов С.Д.",
-    "Максимов М.М.",
-    "Маковский А.С."
-]
+        "Алаторцев П.В.",
+        "Багиров Э.Э.",
+        "Башкиров И.В.",
+        "Борхоев Б.Б.",
+        "Евстафьев А.А.",
+        "Журавлева М.Р.",
+        "Киреев А.А.",
+        "Ламажап Н.А.",
+        "Ленючев Д.А.",
+        "Львов М.Д.",
+        "Макаров Е.С.",
+        "Овчинникова И.А.",
+        "Подлинный М.В.",
+        "Сатин Т.С.",
+        "Секункова П.А.",
+        "Семечаевский П.В.",
+        "Сержантов И.А.",
+        "Токарев А.Д.",
+        "Чичёв А.Б.",
+        "Шахкиримов К.И.",
+        "Шишалов С.Д.",
+        "Максимов М.М.",
+        "Маковский А.С."
+    ]
     bot.send_message(message.chat.id, "Список отсутствующих успешно заполнен заново.")
 
 # Обработчик нажатий на кнопки
@@ -112,6 +115,8 @@ def handle_buttons(message):
         bot.send_message(message.chat.id, "Выбрать присутствующих:", reply_markup=generate_keyboard())
     elif message.text in absentees:
         remove_absentee(message)
+    elif message.text == 'Вернуться на /start':
+        start(message)
     else:
         bot.send_message(message.chat.id, "Неизвестная команда. Используйте кнопки для взаимодействия.")
 
@@ -120,7 +125,6 @@ def remove_absentee(message):
     global absentees
     removed_name = message.text
     absentees.remove(removed_name)
-    bot.send_message(message.chat.id, f"{removed_name} удален из списка отсутствующих.")
     bot.send_message(message.chat.id, "Выбрать присутствующих:", reply_markup=generate_keyboard())
 
 # Запускаем бота
