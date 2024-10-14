@@ -25,6 +25,7 @@ def reforming_list(absentees: list):
                     data[day] = [None] * len(data["ФИО"])
                 data[day][i] = "н"
 
+
 def save_to_excel(data, file_path="ИСП11-322АП.xlsx"):
     df = pd.DataFrame(data)
     df.to_excel(file_path, index=False)

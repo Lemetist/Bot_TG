@@ -68,6 +68,7 @@ def show_absentees(message):
         bot.send_message(message.chat.id, f"{date.today()}")
         absentees_list = "\n".join(absentees)
         bot.send_message(message.chat.id, f"Список отсутствующих:\n{absentees_list}")
+        print(absentees)
         reforming_list(absentees)  # Передаем список, а не строку
         save_to_excel(data)
         bot.send_message(message.chat.id, f"Таблица отсутствующих сохранена в файле ИСП11-322АП.xlsx.")
